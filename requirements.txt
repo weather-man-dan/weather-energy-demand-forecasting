@@ -1,0 +1,5 @@
+This project will use Python libraries, including:
+  - pandas
+  - sklearn
+  - xarray
+  - matplotlib

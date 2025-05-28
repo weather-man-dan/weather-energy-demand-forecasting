@@ -31,11 +31,13 @@ def train_and_evaluate(model, model_name, df, feature_cols, target_col):
     mae = mean_absolute_error(y_test, y_pred)
 
     return {
-        "model": model_name,
-        "r2_score": round(r2, 4),
-        "mae": round(mae, 2),
-        "y_test": y_test,
-        "y_pred": y_pred
-    }
+    "model": model,  # 👈 actual model object
+    "model_name": model_name,
+    "r2_score": round(r2, 4),
+    "mae": round(mae, 2),
+    "y_test": y_test,
+    "y_pred": y_pred
+}
+
 
 

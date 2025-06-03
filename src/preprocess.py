@@ -1,29 +1,26 @@
-# This file will contain functions to clean, merge, and transform data
-
 import pandas as pd
 
-def merge_and_clean_data(df_weather: pd.DataFrame, df_energy: pd.DataFrame) -> pd.DataFrame:
-    df = pd.merge(df_weather, df_energy, on="date")
-    df = df.dropna()
-    return df
+def create_features(df):
+    df = df.copy()
 
-def create_features(df: pd.DataFrame) -> pd.DataFrame:
-    # 1. Extract month as a categorical variable
+    # 📆 Extract month number and string for seasonal analysis
     df["month_num"] = df["month"].dt.month
     df["month_str"] = df["month"].dt.strftime("%b")
-    
-    # 2. Lag features (previous month's HDD/gas demand)
+
+    # ⏳ Lag features: previous month HDD and gas demand
     df["HDD_lag1"] = df["HDD"].shift(1)
     df["gas_demand_lag1"] = df["gas_demand"].shift(1)
-    
-    # 3. Optional: Rolling average of HDD (last 3 months)
-    df["HDD_rolling3"] = df["HDD"].rolling(3).mean()
-    
-    # 4. Drop any rows with NA from lagging/rolling
-    df = df.dropna().reset_index(drop=True)
-    
-    # 5 HDD difference from previous day
-    df["HDD_diff"] = df["HDD"].diff()
+
+    # 📉 Change in HDD from previous month
+    df["HDD_diff"] = df["HDD"] - df["HDD_lag1"]
+
+    # 🔁 Rolling average of HDD over the last 3 months
+    df["HDD_rolling3"] = df["HDD"].rolling(window=3).mean()
+
+    # 🧹 Drop any rows with missing values from lag/rolling ops
+    df = df.dropna(subset=["HDD_lag1", "gas_demand_lag1", "HDD_diff", "HDD_rolling3"])
+    df = df.reset_index(drop=True)
 
     return df
+
 

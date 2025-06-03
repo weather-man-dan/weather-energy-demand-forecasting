@@ -2,11 +2,6 @@ import pandas as pd
 import numpy as np
 import os
 
-# File paths
-noaa_path = "data/raw/NOAA_Data.csv"
-eia_path = "data/raw/EIA_Gas_Data.csv"
-output_path = "data/processed/modeling_dataset.csv"
-
 # -----------------------------------
 # Process NOAA Weather Data
 # -----------------------------------

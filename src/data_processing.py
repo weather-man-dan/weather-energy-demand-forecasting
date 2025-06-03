@@ -47,7 +47,7 @@ def process_eia(filepath):
     df = df.dropna(subset=["month", "gas_demand"])
 
     # Parse month as datetime (YYYY-MM)
-    df["month"] = pd.to_datetime(df["month"], format="%Y-%m")
+    df["month"] = pd.to_datetime(df["month"], format="%b-%Y")
     df["gas_demand"] = df["gas_demand"].astype(int)
 
     return df

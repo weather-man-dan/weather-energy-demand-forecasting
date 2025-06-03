@@ -8,26 +8,22 @@ def merge_and_clean_data(df_weather: pd.DataFrame, df_energy: pd.DataFrame) -> p
     return df
 
 def create_features(df: pd.DataFrame) -> pd.DataFrame:
-    # Rolling average of HDD
-    df["HDD_rolling"] = df["HDD"].rolling(window=7).mean()
-
-    # Lag of demand (previous day)
-    df["lag_demand"] = df["demand"].shift(1)
-
-    # Day of week (0 = Monday, 6 = Sunday)
-    df["day_of_week"] = df["date"].dt.dayofweek
-
-    # HDD difference from previous day
+    # 1. Extract month as a categorical variable
+    df["month_num"] = df["month"].dt.month
+    df["month_str"] = df["month"].dt.strftime("%b")
+    
+    # 2. Lag features (previous month's HDD/gas demand)
+    df["HDD_lag1"] = df["HDD"].shift(1)
+    df["gas_demand_lag1"] = df["gas_demand"].shift(1)
+    
+    # 3. Optional: Rolling average of HDD (last 3 months)
+    df["HDD_rolling3"] = df["HDD"].rolling(3).mean()
+    
+    # 4. Drop any rows with NA from lagging/rolling
+    df = df.dropna().reset_index(drop=True)
+    
+    # 5 HDD difference from previous day
     df["HDD_diff"] = df["HDD"].diff()
-
-    # Weekend flag
-    df["is_weekend"] = df["day_of_week"].isin([5, 6]).astype(int)
-
-    # Rolling average of demand (7 days)
-    df["demand_rolling"] = df["demand"].rolling(window=7).mean()
-
-    # Drop rows with NA introduced by rolling, lag, diff
-    df = df.dropna()
 
     return df
 
